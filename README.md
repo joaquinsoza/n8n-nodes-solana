@@ -1,48 +1,67 @@
-![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
+# n8n-nodes-solana
 
-# n8n-nodes-starter
+This is an n8n community package for Solana blockchain operations. It lets you sign transactions and messages using Solana secret keys in your n8n workflows.
 
-This repo contains example nodes to help you get started building your own custom integrations for [n8n](https://n8n.io). It includes the node linter and other dependencies.
+Solana is a high-performance blockchain platform designed for decentralized applications and crypto-currencies.
 
-To make your custom node available to the community, you must create it as an npm package, and [submit it to the npm registry](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry).
+[n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
 
-If you would like your node to be available on n8n cloud you can also [submit your node for verification](https://docs.n8n.io/integrations/creating-nodes/deploy/submit-community-nodes/).
+## ⚠️ Security Warning
 
-## Prerequisites
+**IMPORTANT**: This package requires access to your Solana private keys for signing operations. Please be aware of the following security considerations:
 
-You need the following installed on your development machine:
+- **Never use this package in n8n Cloud or any untrusted environment** - Any system running this package will have full access to your signing keys
+- **Only use in self-hosted n8n instances** that you fully control and trust
+- **Store private keys securely** using environment variables, never hardcode them
+- **Use dedicated signing keys** - Consider using keys specifically for automated workflows rather than your main wallet keys
+- **Audit your workflows** - Ensure only trusted parties have access to workflows using these nodes
+- **Monitor key usage** - Keep track of what transactions are being signed
 
-* [git](https://git-scm.com/downloads)
-* Node.js and npm. Minimum version Node 20. You can find instructions on how to install both using nvm (Node Version Manager) for Linux, Mac, and WSL [here](https://github.com/nvm-sh/nvm). For Windows users, refer to Microsoft's guide to [Install NodeJS on Windows](https://docs.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-windows).
-* Install n8n with:
-  ```
-  npm install n8n -g
-  ```
-* Recommended: follow n8n's guide to [set up your development environment](https://docs.n8n.io/integrations/creating-nodes/build/node-development-environment/).
+## Installation
 
-## Using this starter
+Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
 
-These are the basic steps for working with the starter. For detailed guidance on creating and publishing nodes, refer to the [documentation](https://docs.n8n.io/integrations/creating-nodes/).
+## Operations
 
-1. [Generate a new repository](https://github.com/n8n-io/n8n-nodes-starter/generate) from this template repository.
-2. Clone your new repo:
-   ```
-   git clone https://github.com/<your organization>/<your-repo-name>.git
-   ```
-3. Run `npm i` to install dependencies.
-4. Open the project in your editor.
-5. Browse the examples in `/nodes` and `/credentials`. Modify the examples, or replace them with your own nodes.
-6. Update the `package.json` to match your details.
-7. Run `npm run lint` to check for errors or `npm run lintfix` to automatically fix errors when possible.
-8. Test your node locally. Refer to [Run your node locally](https://docs.n8n.io/integrations/creating-nodes/test/run-node-locally/) for guidance.
-9. Replace this README with documentation for your node. Use the [README_TEMPLATE](README_TEMPLATE.md) to get started.
-10. Update the LICENSE file to use your details.
-11. [Publish](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry) your package to npm.
+This package provides two nodes:
 
-## More information
+### Solana Sign Transaction
+Signs Solana transactions using a secret key.
 
-Refer to our [documentation on creating nodes](https://docs.n8n.io/integrations/creating-nodes/) for detailed information on building your own nodes.
+**Input**: Base64-encoded unsigned transaction
+**Output**: Base64-encoded signed transaction ready for broadcast
+
+### Solana Sign Message  
+Signs arbitrary messages using a Solana secret key.
+
+**Input**: Message string with optional encoding (UTF-8, Base64, or Hex)
+**Output**: Base58-encoded Ed25519 signature
+
+## Credentials
+
+### Solana Secret Key API
+Set up credentials by providing:
+- **Secret Key**: Your Solana secret key (stored securely in n8n)
+
+The secret key should be either:
+- A base58-encoded secret key string, OR  
+- A JSON array of 64 bytes (e.g., `[1,2,3,...]`)
+
+Example secret key formats:
+- Base58: `5J7XqnKdA8Bg6cW8aX9X9X9X9X9X9X9X9X9X9X9X9X9X9X9X9X9X9X9X9X9X9X9X9X9X9`
+- JSON Array: `[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64]`
+
+## Compatibility
+
+This package requires n8n version 1.0.0 or higher.
+
+## Resources
+
+* [n8n community nodes documentation](https://docs.n8n.io/integrations/community-nodes/)
+* [Solana Cookbook - Sign & Verify Messages](https://solanacookbook.com/references/off-chain/sign-off-chain-message.html)
+* [QuickNode - Send Transactions with Solana Kit](https://www.quicknode.com/guides/solana-development/transactions/solana-kit)
+* [Solana Web3.js Documentation](https://docs.solana.com/developing/clients/javascript-api)
 
 ## License
 
-[MIT](https://github.com/n8n-io/n8n-nodes-starter/blob/master/LICENSE.md)
+[MIT](https://github.com/n8n-io/n8n-nodes-solana/blob/master/LICENSE.md)
