@@ -7,8 +7,22 @@ import {
 	NodeOperationError,
 } from 'n8n-workflow';
 
-import { Connection, clusterApiUrl, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { Connection, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { getSignerFromCredentials } from '../../utils/solanaUtils';
+
+// Default RPC URLs for standard networks
+function getDefaultRpcUrl(network: string): string {
+	switch (network) {
+		case 'mainnet-beta':
+			return 'https://api.mainnet-beta.solana.com';
+		case 'devnet':
+			return 'https://api.devnet.solana.com';
+		case 'testnet':
+			return 'https://api.testnet.solana.com';
+		default:
+			return 'https://api.mainnet-beta.solana.com';
+	}
+}
 
 export class SolanaWalletInfo implements INodeType {
 	description: INodeTypeDescription = {
@@ -88,18 +102,21 @@ export class SolanaWalletInfo implements INodeType {
 				},
 			},
 			{
-				displayName: 'Custom RPC URL',
-				name: 'customRpcUrl',
+				displayName: 'RPC Credential',
+				name: 'rpcCredential',
 				type: 'string',
+				typeOptions: {
+					credentialType: 'solanaRpcApi',
+				},
 				default: '',
-				placeholder: 'https://api.mainnet-beta.solana.com',
-				description: 'Custom RPC endpoint URL (only used when Network is set to Custom RPC)',
+				description: 'Select a custom RPC credential (required when using Custom RPC)',
 				displayOptions: {
 					show: {
 						operation: ['walletInfo'],
 						network: ['custom'],
 					},
 				},
+				required: true,
 			},
 		],
 	};
@@ -131,19 +148,32 @@ export class SolanaWalletInfo implements INodeType {
 				let connection: Connection;
 				let networkInfo: string;
 
-				// Get network parameters
+				// Get network parameter
 				const network = this.getNodeParameter('network', 0) as string;
-				const customRpcUrl = this.getNodeParameter('customRpcUrl', 0) as string;
 
-				// Set up the connection
+				// Set up the connection based on network
 				if (network === 'custom') {
-					if (!customRpcUrl) {
-						throw new NodeOperationError(this.getNode(), 'Custom RPC URL is required when using custom network');
+					// Use custom RPC credential
+					const rpcCredentials = await this.getCredentials('solanaRpcApi');
+					if (!rpcCredentials) {
+						throw new NodeOperationError(this.getNode(), 'RPC credential is required when using custom network');
 					}
-					connection = new Connection(customRpcUrl);
-					networkInfo = customRpcUrl;
+
+					let rpcUrl: string;
+					const credentialNetwork = rpcCredentials.network as string;
+					if (credentialNetwork === 'custom' && rpcCredentials.customRpcUrl) {
+						rpcUrl = rpcCredentials.customRpcUrl as string;
+					} else {
+						// Use the credential's network setting with default URLs
+						rpcUrl = getDefaultRpcUrl(credentialNetwork);
+					}
+
+					connection = new Connection(rpcUrl);
+					networkInfo = rpcUrl;
 				} else {
-					connection = new Connection(clusterApiUrl(network as any));
+					// Use default RPC URLs for standard networks
+					const rpcUrl = getDefaultRpcUrl(network);
+					connection = new Connection(rpcUrl);
 					networkInfo = network;
 				}
 
