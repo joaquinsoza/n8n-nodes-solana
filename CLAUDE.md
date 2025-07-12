@@ -13,24 +13,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture Overview
 
-This is an n8n community package providing Solana blockchain operations (transaction signing and wallet information retrieval) for n8n workflows.
+This is an n8n community package providing Solana blockchain operations (transaction signing and wallet public key extraction) for n8n workflows.
 
 ### Core Components
 
 **Node Structure:**
 - `nodes/SolanaSignTransaction/` - Transaction signing node implementation
-- `nodes/SolanaWalletInfo/` - Wallet information and balance retrieval node
+- `nodes/SolanaWalletInfo/` - Wallet public key extraction node
 - `credentials/SolanaSecretKeyApi.credentials.ts` - Credential definition for Solana secret keys
-- `credentials/SolanaRpcApi.credentials.ts` - Credential definition for RPC endpoint configuration
 - `utils/solanaUtils.ts` - Shared utilities for key management and signing operations
 
 **Key Architecture Patterns:**
 - Uses n8n's `INodeType` interface for node definitions
-- Credential system stores Solana secret keys and RPC configurations securely
+- Credential system stores Solana secret keys securely
 - Supports both base58-encoded strings and JSON byte arrays for secret key input
-- Uses `@solana/web3.js` for transaction handling, balance queries, and `bs58` for encoding
+- Uses `@solana/web3.js` for transaction handling and `bs58` for encoding
 - Error handling focuses on security-conscious messaging (fee payer validation, key format issues)
-- SolanaWalletInfo node supports two operation modes: fast public key extraction (no RPC) and full wallet info with balance (requires RPC)
+- SolanaWalletInfo node provides fast public key extraction from credentials without any network calls
 
 ### Security Considerations
 
@@ -47,18 +46,16 @@ This package handles Solana private keys and should only be used in trusted, sel
 - Returns base64-encoded signed transactions
 
 **SolanaWalletInfo Node:**
-- Two operation modes:
-  - "Get Public Key Only" - Fast extraction of public key from credentials (no network calls)
-  - "Get Wallet Info with Balance" - Retrieves public key, balance, and account information via RPC
-- Network configuration: Mainnet Beta, Devnet, Testnet, or Custom RPC endpoint
-- Returns wallet information including balance in both lamports and SOL
+- Extracts public key from SolanaSecretKeyApi credentials (no network calls required)
+- Fast and simple operation for getting wallet public keys
+- Returns JSON with publicKey field
 
 ### Build Process
 
 - TypeScript compilation to `dist/` directory
 - Gulp task copies SVG icons from nodes to dist
 - n8n package structure requires specific exports in package.json `n8n` section
-- Both credentials (SolanaSecretKeyApi and SolanaRpcApi) must be registered in package.json
+- SolanaSecretKeyApi credential must be registered in package.json
 - Supports n8n API version 1
 
 ### Dependencies

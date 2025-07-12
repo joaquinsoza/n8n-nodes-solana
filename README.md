@@ -1,6 +1,6 @@
 # n8n-nodes-solana
 
-This is an n8n community package for Solana blockchain operations. It lets you sign transactions and messages using Solana secret keys in your n8n workflows.
+This is an n8n community package for Solana blockchain operations. It lets you sign transactions and extract wallet information using Solana secret keys in your n8n workflows.
 
 Solana is a high-performance blockchain platform designed for decentralized applications and crypto-currencies.
 
@@ -31,11 +31,11 @@ Signs Solana transactions using a secret key.
 **Input**: Base64-encoded unsigned transaction
 **Output**: Base64-encoded signed transaction ready for broadcast
 
-### Solana Sign Message  
-Signs arbitrary messages using a Solana secret key.
+### Solana Wallet Info
+Extracts the public key from a Solana secret key credential.
 
-**Input**: Message string with optional encoding (UTF-8, Base64, or Hex)
-**Output**: Base58-encoded Ed25519 signature
+**Input**: No input parameters required
+**Output**: JSON object containing the wallet's public key
 
 ## Credentials
 
