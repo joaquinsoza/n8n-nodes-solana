@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-solana",
   "version": "0.1.0",
-  "description": "n8n community package for Solana blockchain operations - sign transactions and messages",
+  "description": "n8n community package for Solana blockchain operations - sign transactions, messages and get wallet information",
   "keywords": [
     "n8n-community-node-package",
     "solana",
@@ -37,10 +37,12 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/credentials/SolanaSecretKeyApi.credentials.js"
+      "dist/credentials/SolanaSecretKeyApi.credentials.js",
+      "dist/credentials/SolanaRpcApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/SolanaSignTransaction/SolanaSignTransaction.node.js"
+      "dist/nodes/SolanaSignTransaction/SolanaSignTransaction.node.js",
+      "dist/nodes/SolanaWalletInfo/SolanaWalletInfo.node.js"
     ]
   },
   "devDependencies": {
